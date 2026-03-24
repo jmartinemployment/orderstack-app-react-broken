@@ -30,7 +30,7 @@ import { env } from '../config/env.js'
 // ─── Better Auth instance (exported for route handlers) ──────────────────────
 
 export const auth = betterAuth({
-  secret: env.BETTER_AUTH_SECRET,
+  secret: env.JWT_SECRET,
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {
@@ -104,7 +104,7 @@ export async function authPlugin(fastify: FastifyInstance) {
 
     let payload: JwtPayload
     try {
-      payload = jwt.verify(token, env.BETTER_AUTH_SECRET, {
+      payload = jwt.verify(token, env.JWT_SECRET, {
         algorithms: ['HS256'],
       }) as JwtPayload
     } catch (err) {

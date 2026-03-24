@@ -56,7 +56,7 @@ function issueAccessToken(payload: {
   user_id: string
   email: string
 }): string {
-  return jwt.sign(payload, env.BETTER_AUTH_SECRET, {
+  return jwt.sign(payload, env.JWT_SECRET, {
     algorithm: 'HS256',
     expiresIn: ACCESS_TOKEN_TTL,
   })
@@ -65,7 +65,7 @@ function issueAccessToken(payload: {
 function issueRefreshToken(baUserId: string, tenantId: string): string {
   return jwt.sign(
     { sub: baUserId, tenant_id: tenantId, type: 'refresh' },
-    env.BETTER_AUTH_SECRET,
+    env.JWT_SECRET,
     { algorithm: 'HS256', expiresIn: `${REFRESH_TOKEN_TTL_S}s` },
   )
 }
@@ -281,7 +281,7 @@ export async function authRoutes(fastify: FastifyInstance) {
 
     if (token) {
       try {
-        const payload = jwt.verify(token, env.BETTER_AUTH_SECRET) as { sub: string }
+        const payload = jwt.verify(token, env.JWT_SECRET) as { sub: string }
         // Delete all sessions for this user
         await db.delete(baSession).where(eq(baSession.userId, payload.sub))
       } catch {
@@ -303,7 +303,7 @@ export async function authRoutes(fastify: FastifyInstance) {
 
     let payload: { sub: string; tenant_id: string; type: string }
     try {
-      payload = jwt.verify(token, env.BETTER_AUTH_SECRET) as typeof payload
+      payload = jwt.verify(token, env.JWT_SECRET) as typeof payload
     } catch (err) {
       clearRefreshCookie(reply)
       const code =

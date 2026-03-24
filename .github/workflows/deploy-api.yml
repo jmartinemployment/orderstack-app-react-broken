@@ -5,14 +5,16 @@ on:
     branches: [main]
     paths:
       - 'apps/api/**'
+      - 'apps/worker/**'
       - 'packages/db/**'
       - 'packages/types/**'
+      - 'render.yaml'
 
 jobs:
-  deploy:
-    name: Deploy to Staging
+  migrate:
+    name: Run Database Migrations
     runs-on: ubuntu-latest
-    environment: staging
+    environment: production
     steps:
       - uses: actions/checkout@v4
 
@@ -27,15 +29,31 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Build API
-        run: pnpm build --filter="@orderstack/api"
-
-      - name: Run database migrations
+      - name: Run Drizzle migrations against Supabase (via DIRECT_URL)
         run: pnpm db:migrate
         env:
-          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          # DIRECT_URL bypasses Supavisor — required for DDL during migrations
+          DATABASE_URL: ${{ secrets.DIRECT_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
-      - name: Deploy to Railway / Fly.io
-        run: echo "Deploy step — configure for your hosting provider"
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  deploy:
+    name: Trigger Render Deploy
+    runs-on: ubuntu-latest
+    needs: migrate
+    environment: production
+    steps:
+      - name: Deploy API service via Render deploy hook
+        run: |
+          curl -s "${{ secrets.RENDER_API_DEPLOY_HOOK_URL }}" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            --fail \
+            -o /dev/null
+
+      - name: Deploy Worker service via Render deploy hook
+        run: |
+          curl -s "${{ secrets.RENDER_WORKER_DEPLOY_HOOK_URL }}" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            --fail \
+            -o /dev/null
