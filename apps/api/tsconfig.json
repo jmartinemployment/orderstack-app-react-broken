@@ -1,5 +1,5 @@
 {
-  "extends": "@orderstack/config/typescript",
+  "extends": "../../packages/config/tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
@@ -7,7 +7,8 @@
     "moduleResolution": "NodeNext",
     "exactOptionalPropertyTypes": false,
     "noPropertyAccessFromIndexSignature": false,
-    "noUncheckedIndexedAccess": false
+    "noUncheckedIndexedAccess": false,
+    "skipLibCheck": true
   },
   "include": ["src"]
 }

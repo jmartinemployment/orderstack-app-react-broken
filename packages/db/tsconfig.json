@@ -1,5 +1,5 @@
 {
-  "extends": "@orderstack/config/typescript",
+  "extends": "../config/tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist"
   },
