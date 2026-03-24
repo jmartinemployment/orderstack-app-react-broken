@@ -11,7 +11,7 @@ services:
     region: ohio
     plan: starter
     rootDir: .
-    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @orderstack/api build
+    buildCommand: pnpm install --frozen-lockfile && pnpm turbo build --filter=@orderstack/api
     startCommand: node apps/api/dist/main.js
     healthCheckPath: /health
     envVars:
@@ -87,7 +87,7 @@ services:
     region: ohio
     plan: starter
     rootDir: .
-    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @orderstack/worker build
+    buildCommand: pnpm install --frozen-lockfile && pnpm turbo build --filter=@orderstack/worker
     startCommand: node apps/worker/dist/main.js
     envVars:
       - key: NODE_ENV
