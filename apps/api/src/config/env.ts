@@ -48,7 +48,9 @@ const envSchema = z.object({
   PAYPAL_CLIENT_ID: z.string().optional(),
   PAYPAL_CLIENT_SECRET: z.string().optional(),
   PAYPAL_WEBHOOK_ID: z.string().optional(),
-  PAYPAL_MODE: z.enum(['sandbox', 'live']).default('sandbox'),
+  PAYPAL_MODE: z.enum(["sandbox", "live"]).default("sandbox"),
+  PAYPAL_PARTNER_ID: z.string().optional(),
+  PAYPAL_BN_CODE: z.string().optional(),
 
   // Email — RESEND_API_KEY comes from Render Secret File
   RESEND_API_KEY: z.string().optional(),
