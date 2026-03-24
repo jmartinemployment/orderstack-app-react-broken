@@ -1,0 +1,11 @@
+{
+  "name": "@orderstack/config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./typescript": "./tsconfig.base.json",
+    "./eslint": "./eslint.config.js",
+    "./tailwind": "./tailwind.config.ts",
+    "./prettier": "./prettier.config.js"
+  }
+}

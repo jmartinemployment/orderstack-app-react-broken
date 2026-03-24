@@ -1,0 +1,41 @@
+name: API Client Codegen
+
+on:
+  workflow_run:
+    workflows: [Deploy API]
+    types: [completed]
+
+jobs:
+  codegen:
+    name: Regenerate API Client
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Fetch OpenAPI spec from staging
+        run: |
+          curl -f https://api-staging.orderstack.io/docs/json -o /tmp/openapi.json
+
+      - name: Generate TypeScript client
+        run: |
+          npx openapi-typescript /tmp/openapi.json --output packages/api-client/src/schema.ts
+
+      - name: Commit updated client
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: regenerate api-client from openapi spec'
+          file_pattern: 'packages/api-client/src/schema.ts'

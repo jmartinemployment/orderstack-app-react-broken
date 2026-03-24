@@ -1,0 +1,15 @@
+node_modules
+dist
+out
+.vite
+coverage
+*.local
+.env
+.env.*
+!.env.example
+.turbo
+*.tsbuildinfo
+playwright-report
+test-results
+.agents
+.claude/skills

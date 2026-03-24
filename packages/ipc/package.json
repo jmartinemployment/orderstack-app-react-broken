@@ -1,0 +1,16 @@
+{
+  "name": "@orderstack/ipc",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@orderstack/config": "workspace:*",
+    "typescript": "^5.7.3"
+  }
+}

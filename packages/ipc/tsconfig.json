@@ -1,0 +1,8 @@
+{
+  "extends": "@orderstack/config/typescript",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src"]
+}

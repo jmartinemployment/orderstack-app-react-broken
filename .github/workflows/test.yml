@@ -1,0 +1,58 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    name: Vitest
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: timescale/timescaledb:latest-pg17
+        env:
+          POSTGRES_USER: orderstack
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: orderstack_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Run migrations on test database
+        run: pnpm db:migrate
+        env:
+          DATABASE_URL: postgresql://orderstack:password@localhost:5432/orderstack_test
+
+      - name: Run tests
+        run: pnpm test
+        env:
+          DATABASE_URL: postgresql://orderstack:password@localhost:5432/orderstack_test
+          REDIS_URL: redis://localhost:6379
+          BETTER_AUTH_SECRET: test-secret-at-least-32-characters-long
+          DEVICE_CERT_PRIVATE_KEY: test
+          DEVICE_CERT_PUBLIC_KEY: test
+          NODE_ENV: test
