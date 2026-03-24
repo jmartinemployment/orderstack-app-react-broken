@@ -69,6 +69,12 @@ services:
         sync: false
       - key: LOG_LEVEL
         value: info
+    # Secret Files — stored as files, read from /etc/secrets/<filename> at runtime
+    secretFiles:
+      - name: PAYPAL_CLIENT_SECRET
+      - name: RESEND_API_KEY
+      - name: CSRF_SECRET
+      - name: MFA_ENCRYPTION_KEY
 
   # ─── Background Worker ───────────────────────────────────────────────────────
   - type: worker
